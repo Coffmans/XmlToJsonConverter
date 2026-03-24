@@ -34,7 +34,7 @@ jobs:
 
       - name: Install readme-ai
         if: steps.check.outputs.missing == 'true'
-        run: pip install readmeai
+        run: pip install "readmeai[google]"
 
       - name: Generate README.md
         if: steps.check.outputs.missing == 'true'
