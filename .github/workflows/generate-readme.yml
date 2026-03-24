@@ -1,0 +1,57 @@
+name: Generate README with readme-ai
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # allows manual trigger from Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  generate-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Only proceed if README.md is missing or empty
+      - name: Check if README exists
+        id: check
+        run: |
+          if [ ! -f README.md ] || [ ! -s README.md ]; then
+            echo "missing=true" >> $GITHUB_OUTPUT
+          else
+            echo "missing=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up Python
+        if: steps.check.outputs.missing == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install readme-ai
+        if: steps.check.outputs.missing == 'true'
+        run: pip install readmeai
+
+      - name: Generate README.md
+        if: steps.check.outputs.missing == 'true'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          readmeai \
+            --repository . \
+            --output README.md \
+            --api openai \
+            --model gpt-4o-mini
+
+      - name: Commit and push README
+        if: steps.check.outputs.missing == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git diff --staged --quiet || git commit -m "docs: auto-generate README via readme-ai"
+          git push
