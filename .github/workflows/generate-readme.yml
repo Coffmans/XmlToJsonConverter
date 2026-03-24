@@ -7,8 +7,7 @@ on:
 
 permissions:
   contents: write
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   generate-readme:
     runs-on: ubuntu-latest
@@ -29,7 +28,7 @@ jobs:
 
       - name: Set up Python
         if: steps.check.outputs.missing == 'true'
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v5.6.0
         with:
           python-version: '3.11'
 
