@@ -44,8 +44,8 @@ jobs:
           readmeai \
             --repository . \
             --output README.md \
-            --api openai \
-            --model gpt-4o-mini
+            --api gemini \
+            --model gemini-1.5-flash
 
       - name: Commit and push README
         if: steps.check.outputs.missing == 'true'
