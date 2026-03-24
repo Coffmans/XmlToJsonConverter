@@ -49,6 +49,8 @@ jobs:
             --output README.md \
             --api gemini \
             --model gemini-1.5-flash
+            --project-name "${{ github.event.repository.name }}"
+            --header-style compact
 
       - name: Commit and push README
         if: steps.check.outputs.missing == 'true'
